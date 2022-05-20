@@ -1,5 +1,5 @@
 # React JS Spotify Clone
-Simple react js web that consume data from Spotify WEB API <br />
+Simple react js web that consume data from Spotify WEB API <br /> <br />
 ![screenshot-desktop](https://i.imgur.com/EsG3Qqc.png)
 
 ## How to run
