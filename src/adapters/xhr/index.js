@@ -2,15 +2,14 @@ import axios from "axios";
 
 import config from "../../config";
 
-function returnAxiosInstance(isAuth = false) {
-
-    if(!isAuth){
+function AxiosInstance(token = null, isAuth = false) {
+    if(!isAuth && token){
         return axios.create({
-            baseURL: config.api.baseUrl,
+            baseURL: config?.api?.baseUrl,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sessionStorage.getItem('spotify-oauth-token')}`
+                'Authorization': `Bearer ${token}`
             }
         });
     }else{
@@ -18,26 +17,27 @@ function returnAxiosInstance(isAuth = false) {
         return axios.create({
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': `Basic ${Buffer.from(config.api.clientId + ':' +config.api.clientSecret).toString('base64')}`
+                'Authorization': `Basic ${Buffer.from(config?.api?.clientId + ':' +config?.api?.clientSecret).toString('base64')}`
             }
         });
     }
 }
 
-export async function get(url) {
-    const axios = returnAxiosInstance();
+export async function get(params) {
+    const axios = AxiosInstance(params?.token);
 
-    return await axios.get(url);
+    return await axios.get(params?.url);
 }
 
-export async function post(url, requestData) {
-    const axios = returnAxiosInstance();
+export async function post(params) {
+    const axios = AxiosInstance(params?.token);
 
-    return await axios.post(url, requestData);
+    return await axios.post(params?.url, params?.data);
 }
 
 export async function postAuth() {
-    const axios = returnAxiosInstance(true);
+    let isAuth = true;
+    const axios = AxiosInstance(null, isAuth);
 
-    return await axios.post(config.api.authUrl, 'grant_type=client_credentials');
+    return await axios.post(config?.api?.authUrl, 'grant_type=client_credentials');
 }

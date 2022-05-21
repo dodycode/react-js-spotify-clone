@@ -1,21 +1,25 @@
 import React, {useState} from 'react';
 
-import { getAuthToken as getTokenAPIAdapter } from '../../adapters/getAuthToken';
+import {postAuth} from '../../adapters/xhr';
 
 const AuthContext = React.createContext(null);
 
 export default function AuthProvider({children}){
+    // global state
     const [token, setToken] = useState(sessionStorage.getItem('spotify-oauth-token') || null);
 
+    // actions
     let getTokenAPI = async (callback) => {
         let isLoading = true;
 
         //make sure this API not run twice
         if(!token){
-            await getTokenAPIAdapter().then(res => {
+            await postAuth().then(res => {
                 if(res?.data?.access_token){
                     setToken(res.data.access_token);
                 }
+            }).catch((err) => {
+                throw err;
             });
         }
 

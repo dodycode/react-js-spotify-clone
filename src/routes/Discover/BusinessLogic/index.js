@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { getNewReleases } from "../../../adapters/DiscoverPage/getNewReleases";
-import { getFeaturedPlaylists } from "../../../adapters/DiscoverPage/getFeaturedPlaylists";
-import { browseCategories } from '../../../adapters/DiscoverPage/browseCategories';
+import {get} from '../../../adapters/xhr';
 import { useAuthContext } from '../../../contexts/AuthContext';
 
 export default function BusinessLogic() {
@@ -13,40 +11,6 @@ export default function BusinessLogic() {
     const authContext = useAuthContext();
 
     //call multiple API in parallel
-
-    const callNewReleasesEndpoint = async () => {
-        await getNewReleases().then(res => {
-            // console.log(res);
-            if(res?.data?.albums?.items){
-                setNewReleases(res.data.albums.items);
-            }
-        }).catch(err => {
-            throw err;
-        });
-    }
-
-    const callFeaturedPlaylistsEndpoint = async () => {
-        await getFeaturedPlaylists().then(res => {
-            // console.log(res)
-            if(res?.data?.playlists?.items){
-                setPlaylists(res.data.playlists.items);
-            }
-        }).catch(err => {
-            throw err;
-        });
-    }
-
-    const callCategoriesEndpoint = async () => {
-        await browseCategories().then(res => {
-            // console.log(res)
-            if(res?.data?.categories?.items){
-                setCategories(res.data.categories.items);
-            }
-        }).catch(err => {
-            throw err;
-        });
-    }
-
     useEffect(() => {
         if(authContext?.token){
             const errorHandler = (err) => {
@@ -57,15 +21,51 @@ export default function BusinessLogic() {
                 }
             }
     
-            callNewReleasesEndpoint().catch(err => {
-                errorHandler(err);
-            });
-            callFeaturedPlaylistsEndpoint().catch(err => {
-                errorHandler(err);
-            });
-            callCategoriesEndpoint().catch(err => {
-                errorHandler(err);
-            });
+            const callNewReleasesEndpoint = async () => {
+                await get({
+                    url: "/browse/new-releases?country=ID",
+                    token: authContext?.token
+                }).then(res => {
+                    // console.log(res);
+                    if(res?.data?.albums?.items){
+                        setNewReleases(res.data.albums.items);
+                    }
+                }).catch(err => {
+                    errorHandler(err);
+                });
+            }
+
+            const callFeaturedPlaylistsEndpoint = async () => {
+                await get({
+                    url: "/browse/featured-playlists?country=ID",
+                    token: authContext?.token
+                }).then(res => {
+                    // console.log(res)
+                    if(res?.data?.playlists?.items){
+                        setPlaylists(res.data.playlists.items);
+                    }
+                }).catch(err => {
+                    errorHandler(err);
+                });
+            }
+
+            const callCategoriesEndpoint = async () => {
+                await get({
+                    url: "/browse/categories?country=ID",
+                    token: authContext?.token
+                }).then(res => {
+                    // console.log(res)
+                    if(res?.data?.categories?.items){
+                        setCategories(res.data.categories.items);
+                    }
+                }).catch(err => {
+                    errorHandler(err);
+                });
+            }
+
+            callNewReleasesEndpoint();
+            callFeaturedPlaylistsEndpoint();
+            callCategoriesEndpoint();
         }
     }, [authContext?.token]);
 

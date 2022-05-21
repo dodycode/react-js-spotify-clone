@@ -19,6 +19,9 @@ export default function Auth() {
     useEffect(() => {
         authContext?.getTokenAPI(() => {
             navigate(from, {replace: true});
+        }).catch(err => {
+            console.error(err);
+            window.alert("Authentication failed, please check your client id and secret again!")
         });
     }, [authContext, from, navigate]);
 
