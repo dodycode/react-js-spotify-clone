@@ -9,12 +9,12 @@ export default function AuthProvider({children}){
     const [token, setToken] = useState(sessionStorage.getItem('spotify-oauth-token') || null);
 
     // actions
-    let getTokenAPI = async (callback) => {
+    let getTokenAPI = async (code, callback) => {
         let isLoading = true;
 
         //make sure this API not run twice
         if(!token){
-            await postAuth().then(res => {
+            await postAuth(code).then(res => {
                 if(res?.data?.access_token){
                     setToken(res.data.access_token);
                 }

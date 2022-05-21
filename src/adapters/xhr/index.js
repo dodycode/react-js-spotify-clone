@@ -35,9 +35,9 @@ export async function post(params) {
     return await axios.post(params?.url, params?.data);
 }
 
-export async function postAuth() {
+export async function postAuth(code) {
     let isAuth = true;
     const axios = AxiosInstance(null, isAuth);
 
-    return await axios.post(config?.api?.authUrl, 'grant_type=client_credentials');
+    return await axios.post(config?.api?.authUrl, `grant_type=authorization_code&code=${code}&redirect_uri=http://localhost:3000/callback/`);
 }

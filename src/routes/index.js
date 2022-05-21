@@ -1,8 +1,9 @@
 import React from 'react';
 
+import CoreLayout from '../common/layouts/CoreLayout';
+
 import {
   Navigate,
-  useLocation,
   Routes as ReactRouterWrapper,
   Route,
 } from "react-router-dom";
@@ -17,14 +18,13 @@ import CredentialsInvalid from './CredentialsInvalid';
 
 function RequireAuth({children}) {
   let authContext = useAuthContext();
-  let currLocation = useLocation();
 
   if(!credentials.api.clientId || !credentials.api.clientSecret){
     return <Navigate to="/credentials-invalid" replace/>
   }
 
   if(!authContext.token){
-    return <Navigate to="/auto-login" state={{from: currLocation}} replace />
+    window.location.href = `https://accounts.spotify.com/authorize?client_id=${credentials?.api.clientId}&response_type=code&scope=streaming%20user-modify-playback-state%20user-read-playback-state%20user-read-currently-playing%20app-remote-control%20user-read-email%20user-read-private&redirect_uri=${window.location.protocol}//${window.location.host}/callback/`;
   }
 
   return children;
@@ -33,15 +33,20 @@ function RequireAuth({children}) {
 export default function Routes() {
   return (
     <AuthProvider>
-      <ReactRouterWrapper>
-        <Route path="/auto-login" element={<Auth />} />
-        <Route path="/credentials-invalid" element={<CredentialsInvalid />} />
-        <Route path="/" element={
-          <RequireAuth>
-            <Discover />
-          </RequireAuth>
-        }></Route>
-      </ReactRouterWrapper>
+      <CoreLayout>
+        <ReactRouterWrapper>
+          {/* <Route path="/login" component={() => {
+            return null;
+          }}/> */}
+          <Route path="/credentials-invalid" element={<CredentialsInvalid />} />
+          <Route path="/callback" element={<Auth />} />
+          <Route path="/" element={
+            <RequireAuth>
+              <Discover />
+            </RequireAuth>
+          }></Route>
+        </ReactRouterWrapper>
+      </CoreLayout>
     </AuthProvider>
   )
 }

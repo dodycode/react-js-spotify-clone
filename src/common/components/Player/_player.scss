@@ -45,13 +45,18 @@
       display: none;
     }
 
-    > span {
+    > span,
+    > img {
       margin-right: 20px;
       width: 50px;
       height: 50px;
       background: $primary-grey;
       border-radius: 6px;
       display: block;
+    }
+
+    > img {
+      background: transparent;
     }
 
     > p {
@@ -76,12 +81,19 @@
       margin-left: 0;
     }
 
-    > svg:nth-of-type(1),
-    > svg:nth-of-type(3) {
+    > button {
+      margin: 0;
+      appearance: none;
+      border:none;
+      background: transparent;
+    }
+
+    > button:nth-of-type(1) svg,
+    > button:nth-of-type(3) svg {
       color: $primary-grey;
     }
 
-    > svg:nth-of-type(2) {
+    > button:nth-of-type(2) svg {
       color: $primary-blue;
       font-size: 35px;
       margin-left: 15px;
