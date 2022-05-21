@@ -1,5 +1,5 @@
 import {postAuth} from "../xhr";
 
-export function getAuthToken() {
-    return postAuth();
+export async function getAuthToken() {
+    return await postAuth();
 }

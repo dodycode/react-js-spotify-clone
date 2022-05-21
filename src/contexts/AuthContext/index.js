@@ -8,16 +8,27 @@ export default function AuthProvider({children}){
     const [token, setToken] = useState(sessionStorage.getItem('spotify-oauth-token') || null);
 
     let getTokenAPI = async (callback) => {
-        return getTokenAPIAdapter().then(res => {
-            if(res?.data?.access_token){
-                setToken(res.data.access_token);
-                sessionStorage.setItem('spotify-oauth-token', token);
-                callback(); //run callback after set token
-            }
-        });
+        let isLoading = true;
+
+        //make sure this API not run twice
+        if(!token){
+            await getTokenAPIAdapter().then(res => {
+                if(res?.data?.access_token){
+                    setToken(res.data.access_token);
+                }
+            });
+        }
+
+        //and then we store to session storage too
+        sessionStorage.setItem('spotify-oauth-token', token);
+        isLoading = false;
+
+        if(!isLoading){
+            callback(); //run callback after set token
+        }
     }
 
-    let contextValue = {token, getTokenAPI};
+    const contextValue = {token, getTokenAPI};
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }

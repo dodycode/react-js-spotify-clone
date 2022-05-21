@@ -15,12 +15,12 @@ export default function Auth() {
     //get intended page that pass to state in router location
     let from = location.state?.from?.pathname || '/';
 
+    //set callback to navigate to intended page after get token
     useEffect(() => {
-        //set callback to navigate to intended page after get token
-        authContext.getTokenAPI(() => {
+        authContext?.getTokenAPI(() => {
             navigate(from, {replace: true});
         });
-    },[authContext, from, navigate]);
+    }, [authContext, from, navigate]);
 
     return (
         <></>

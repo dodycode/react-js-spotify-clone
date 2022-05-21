@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 
-import { getNewReleases } from "../../../adapters/getNewReleases";
-import { getFeaturedPlaylists } from "../../../adapters/getFeaturedPlaylists";
-import { browseCategories } from '../../../adapters/browseCategories';
+import { getNewReleases } from "../../../adapters/DiscoverPage/getNewReleases";
+import { getFeaturedPlaylists } from "../../../adapters/DiscoverPage/getFeaturedPlaylists";
+import { browseCategories } from '../../../adapters/DiscoverPage/browseCategories';
+import { useAuthContext } from '../../../contexts/AuthContext';
 
 export default function BusinessLogic() {
     const [newReleases, setNewReleases] = useState([]);
     const [playlists, setPlaylists] = useState([]);
     const [categories, setCategories] = useState([]);
 
-    const token = sessionStorage.getItem('spotify-oauth-token');
+    const authContext = useAuthContext();
 
     //call multiple API in parallel
 
@@ -47,9 +48,7 @@ export default function BusinessLogic() {
     }
 
     useEffect(() => {
-        let isMounted = true;
-
-        if(token && isMounted){
+        if(authContext?.token){
             const errorHandler = (err) => {
                 console.error(err);
                 if(err?.response?.status === 401){
@@ -68,7 +67,7 @@ export default function BusinessLogic() {
                 errorHandler(err);
             });
         }
-    }, [token]);
+    }, [authContext?.token]);
 
     return {
         newReleases, 

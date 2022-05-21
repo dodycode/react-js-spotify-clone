@@ -24,20 +24,20 @@ function returnAxiosInstance(isAuth = false) {
     }
 }
 
-export function get(url) {
+export async function get(url) {
     const axios = returnAxiosInstance();
 
-    return axios.get(url);
+    return await axios.get(url);
 }
 
-export function post(url, requestData) {
+export async function post(url, requestData) {
     const axios = returnAxiosInstance();
 
-    return axios.post(url, requestData);
+    return await axios.post(url, requestData);
 }
 
-export function postAuth() {
+export async function postAuth() {
     const axios = returnAxiosInstance(true);
 
-    return axios.post(config.api.authUrl, 'grant_type=client_credentials');
+    return await axios.post(config.api.authUrl, 'grant_type=client_credentials');
 }
