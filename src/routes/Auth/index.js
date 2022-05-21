@@ -1,30 +1,28 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 
-import { getAuthToken } from '../../adapters/getAuthToken';
+import {
+    useNavigate,
+    useLocation
+  } from "react-router-dom";
+
+import { useAuthContext } from '../../contexts/AuthContext'
 
 export default function Auth() {
-    const [token, setToken] = useState(sessionStorage.getItem('spotify-oauth-token') || '');
+    let navigate = useNavigate();
+    let location = useLocation();
+    let authContext = useAuthContext();
+
+    //get intended page that pass to state in router location
+    let from = location.state?.from?.pathname || '/';
 
     useEffect(() => {
-        let isMounted = true;
-        if(!token){
-            getAuthToken().then(res => {
-            if(isMounted){
-                if(res.data.access_token){
-                    setToken(res.data.access_token);
-                    sessionStorage.setItem('spotify-oauth-token', res.data.access_token);
-                    window.location.reload();
-                }
-            }
-            }).catch(err => {
-                window.alert('Authentication failed. Please make sure credentials is valid');
-                console.error(err);
-            }); 
-        }
-    }, [token]);
+        //set callback to navigate to intended page after get token
+        authContext.getTokenAPI(() => {
+            navigate(from, {replace: true});
+        });
+    },[authContext, from, navigate]);
 
     return (
-        <>
-        </>
-    );
+        <></>
+    )
 }

@@ -1,28 +1,47 @@
-import React, {useState,useEffect} from 'react';
+import React from 'react';
+
+import {
+  Navigate,
+  useLocation,
+  Routes as ReactRouterWrapper,
+  Route,
+} from "react-router-dom";
+
+import credentials from '../config';
+import AuthProvider, { useAuthContext } from '../contexts/AuthContext';
+
+// pages
 import Discover from './Discover';
 import Auth from './Auth';
 import CredentialsInvalid from './CredentialsInvalid';
 
-import credentials from '../config';
-
-export default function Routes() {
-  const [isLogin, setIsLogin] = useState(false);
-  const token = sessionStorage.getItem('spotify-oauth-token') || null;
-
-  useEffect(() => {
-    if(token){
-      setIsLogin(true);
-    }
-  }, [token]);
+function RequireAuth({children}) {
+  let authContext = useAuthContext();
+  let currLocation = useLocation();
 
   if(!credentials.api.clientId || !credentials.api.clientSecret){
-    return <CredentialsInvalid />
+    return <Navigate to="/credentials-invalid" replace/>
   }
 
-  if(!isLogin){
-    return <Auth />
+  if(!authContext.token){
+    return <Navigate to="/auto-login" state={{from: currLocation}} replace />
   }
 
-  // Here you'd return an array of routes
-  return <Discover />;
+  return children;
+}
+
+export default function Routes() {
+  return (
+    <AuthProvider>
+      <ReactRouterWrapper>
+        <Route path="/auto-login" element={<Auth />} />
+        <Route path="/credentials-invalid" element={<CredentialsInvalid />} />
+        <Route path="/" element={
+          <RequireAuth>
+            <Discover />
+          </RequireAuth>
+        }></Route>
+      </ReactRouterWrapper>
+    </AuthProvider>
+  )
 }
