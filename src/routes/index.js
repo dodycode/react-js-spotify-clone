@@ -24,7 +24,7 @@ function RequireAuth({children}) {
   }
 
   if(!authContext.token){
-    window.location.href = `https://accounts.spotify.com/authorize?client_id=${credentials?.api.clientId}&response_type=code&scope=streaming%20user-modify-playback-state%20user-read-playback-state%20user-read-currently-playing%20app-remote-control%20user-read-email%20user-read-private&redirect_uri=${window.location.protocol}//${window.location.host}/callback/`;
+    window.location.href = `https://accounts.spotify.com/authorize?client_id=${credentials?.api.clientId}&response_type=code&scope=streaming%20user-modify-playback-state%20user-read-playback-state%20user-read-currently-playing%20app-remote-control%20user-read-email%20user-read-private%20user-library-read&redirect_uri=${window.location.protocol}//${window.location.host}/callback/`;
   }
 
   return children;

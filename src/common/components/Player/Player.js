@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faStepForward,
@@ -22,6 +22,13 @@ export default function Player() {
   let [playerPaused, setPlayerPaused] = useState(false);
   let [playerTrack, setPlayerTrack] = useState(false);
   let [playerShuffle, setPlayerShuffle] = useState(false);
+  
+  //states and ref for bar progress
+  let [playerDuration, setPlayerDuration] = useState(0);
+  let [playerUpdateTime, setPlayerUpdateTime] = useState(0);
+  let [playerPositionNumber, setPlayerPositionNumber] = useState(0);
+  let [playerPositionPercentage, setPlayerPositionPercentage] = useState(0);
+  const playerPosition = useRef(null);
 
   useEffect(() => {
     if(authContext?.token){
@@ -56,6 +63,9 @@ export default function Player() {
 
           setPlayerTrack(state.track_window.current_track);
           setPlayerPaused(state.paused);
+          setPlayerPositionNumber(state.position);
+          setPlayerDuration(state.duration);
+          setPlayerUpdateTime(window.performance.now());
 
           player?.getCurrentState().then(state => {
             !state ? setPlayerLoaded(false) : setPlayerLoaded(true);
@@ -80,6 +90,23 @@ export default function Player() {
       }
     }
   }, [authContext]);
+
+  useEffect(() => {
+    playerPosition.current = setInterval(() => {
+      if(!playerPaused){
+        let currPosition = playerPositionNumber + (window.performance.now() - playerUpdateTime) / 1000;
+        setPlayerPositionNumber(currPosition > playerDuration ? playerDuration : currPosition);
+        
+        let currentPositionPercentage = playerPositionNumber ? (playerPositionNumber / playerDuration * 100) : 0;
+        setPlayerPositionPercentage(currentPositionPercentage);
+      }
+    },300);
+
+    //remove player interval when component unmount
+    return () => {
+      playerPosition.current && clearInterval(playerPosition.current);
+    }
+  },[playerPosition, playerPaused, playerDuration, playerPositionNumber, playerPositionPercentage, playerUpdateTime]);
 
   const playerShuffleAction = async () => {
     if(authContext?.token){
@@ -122,7 +149,9 @@ export default function Player() {
           <button onClick={() => { playerInstance.togglePlay() }}><FontAwesomeIcon icon={playerPaused ? faPlayCircle : faPauseCircle} /></button>
           <button onClick={() => { playerInstance.nextTrack() }}><FontAwesomeIcon icon={faStepForward} /></button>
         </div>
-        <div className="player__seekbar" />
+        <div className="player__seekbar">
+          <div ref={playerPosition} className="player__seekbar__progress" style={{width: playerPositionPercentage+'%'}}></div>
+        </div>
         <div className="player__actions">
           <FontAwesomeIcon icon={faEllipsisH} />
           <FontAwesomeIcon icon={faHeart} />

@@ -122,10 +122,19 @@
     margin-left: 50px;
     margin-right: 50px;
     border-radius: 2px;
+    position: relative;
 
     @media only screen and (max-width: 850px) {
       margin-left: 20px;
       margin-right: 20px;
+    }
+
+    &__progress{
+      animation: load 3s normal forwards;
+      box-shadow: 0 10px 40px -10px #fff;
+      background: $primary-blue;
+      height: 4px;
+      width: 0;
     }
   }
 
