@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 
-import {postAuth} from '../../adapters/xhr';
+import {post} from '../../adapters/xhr';
+
+import config from '../../config';
 
 const AuthContext = React.createContext(null);
 
@@ -14,7 +16,14 @@ export default function AuthProvider({children}){
 
         //make sure this API not run twice
         if(!token){
-            await postAuth(code).then(res => {
+            await post({
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Basic ${Buffer.from(config?.api?.clientId + ':' +config?.api?.clientSecret).toString('base64')}`
+                },
+                url: config?.api?.authUrl,
+                data: `grant_type=authorization_code&code=${code}&redirect_uri=http://localhost:3000/callback/`
+            }).then(res => {
                 if(res?.data?.access_token){
                     setToken(res.data.access_token);
                 }

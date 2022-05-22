@@ -110,9 +110,15 @@ export default function Player() {
 
   const playerShuffleAction = async () => {
     if(authContext?.token){
+      let apiHeaders = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authContext?.token}`
+    };
+
       await put({
         url: `https://api.spotify.com/v1/me/player/shuffle?state=${!playerShuffle}`,
-        token: authContext?.token
+        headers: apiHeaders
       }).then((res) => {
         console.log(res);
         setPlayerShuffle(!playerShuffle);
