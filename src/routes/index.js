@@ -35,9 +35,6 @@ export default function Routes() {
     <AuthProvider>
       <CoreLayout>
         <ReactRouterWrapper>
-          {/* <Route path="/login" component={() => {
-            return null;
-          }}/> */}
           <Route path="/credentials-invalid" element={<CredentialsInvalid />} />
           <Route path="/callback" element={<Auth />} />
           <Route path="/" element={
