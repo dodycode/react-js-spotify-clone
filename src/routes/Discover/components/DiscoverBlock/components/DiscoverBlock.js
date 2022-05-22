@@ -36,11 +36,22 @@ export default function DiscoverBlock({ text, id, data, imagesKey = 'images' }) 
         }
       </div>
       <div className="discover-block__row" id={id}>
+      {/* { console.log(data[0]?.type) } */}
         {
           data.length ? (
-            data.map(({ [imagesKey]: images, name }) => (
-              <DiscoverItem key={name} images={images} name={name} />
-            ))
+            data[0]?.type === "album" ? (
+              data.map(({ [imagesKey]: images, name, artists }) => (
+                <DiscoverItem key={name} images={images} name={name} songUri={artists ? artists[0].uri : null} />
+              ))
+            ) : data[0]?.type === "playlist" ? (
+              data.map(({ [imagesKey]: images, name, uri }) => (
+                <DiscoverItem key={name} images={images} name={name} songUri={uri} />
+              ))
+            ) : (
+              data.map(({ [imagesKey]: images, name }) => (
+                <DiscoverItem key={name} images={images} name={name} songUri={null} />
+              ))
+            )
           ) : (
             [...Array(5)].map((x,i) => (
               <DiscoverSkeleton key={i}/>

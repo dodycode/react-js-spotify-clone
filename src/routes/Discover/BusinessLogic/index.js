@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import {get} from '../../../adapters/xhr';
+import {get, put} from '../../../adapters/xhr';
 import { useAuthContext } from '../../../contexts/AuthContext';
 
 export default function BusinessLogic() {
@@ -13,6 +13,8 @@ export default function BusinessLogic() {
     //call multiple API in parallel
     useEffect(() => {
         if(authContext?.token){
+            let withBaseUrl = true;
+            
             const errorHandler = (err) => {
                 console.error(err);
                 if(err?.response?.status === 401){
@@ -25,7 +27,7 @@ export default function BusinessLogic() {
                 await get({
                     url: "/browse/new-releases?country=ID",
                     token: authContext?.token
-                }).then(res => {
+                }, withBaseUrl).then(res => {
                     // console.log(res);
                     if(res?.data?.albums?.items){
                         setNewReleases(res.data.albums.items);
@@ -39,7 +41,7 @@ export default function BusinessLogic() {
                 await get({
                     url: "/browse/featured-playlists?country=ID",
                     token: authContext?.token
-                }).then(res => {
+                }, withBaseUrl).then(res => {
                     // console.log(res)
                     if(res?.data?.playlists?.items){
                         setPlaylists(res.data.playlists.items);
@@ -53,7 +55,7 @@ export default function BusinessLogic() {
                 await get({
                     url: "/browse/categories?country=ID",
                     token: authContext?.token
-                }).then(res => {
+                }, withBaseUrl).then(res => {
                     // console.log(res)
                     if(res?.data?.categories?.items){
                         setCategories(res.data.categories.items);
@@ -74,4 +76,23 @@ export default function BusinessLogic() {
         playlists, 
         categories
     };
+}
+
+export async function playSong (contextUri, token) {
+    if(contextUri && token){
+        await put({
+            url: "https://api.spotify.com/v1/me/player/play",
+            token: token,
+            data: {
+                "context_uri": contextUri,
+                "position_ms": 0
+            }
+        }).catch(err => {
+            console.error(err);
+            if(err?.response?.status === 401){
+                sessionStorage.removeItem('spotify-oauth-token');
+                window.location.reload();
+            }
+        });
+    }
 }
