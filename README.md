@@ -36,4 +36,4 @@ npm start
 ```
 
 ## NOTES
-Currently, you need Premium Spotify Account to use Web Media API Playback Feature for playing a song or albums.
+Currently, you need Premium Spotify Account to be able using Spotify Playback SDK Feature for playing a song or albums.
