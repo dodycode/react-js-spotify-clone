@@ -16,6 +16,7 @@ import Discover from './Discover';
 import Auth from './Auth';
 import CredentialsInvalid from './CredentialsInvalid';
 
+//route auth middleware
 function RequireAuth({children}) {
   let authContext = useAuthContext();
 

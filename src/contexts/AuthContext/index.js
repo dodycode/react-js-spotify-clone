@@ -22,7 +22,7 @@ export default function AuthProvider({children}){
                     'Authorization': `Basic ${Buffer.from(config?.api?.clientId + ':' +config?.api?.clientSecret).toString('base64')}`
                 },
                 url: config?.api?.authUrl,
-                data: `grant_type=authorization_code&code=${code}&redirect_uri=http://localhost:3000/callback/`
+                data: `grant_type=authorization_code&code=${code}&redirect_uri=${window.location.protocol}//${window.location.host}/callback/`
             }).then(res => {
                 if(res?.data?.access_token){
                     setToken(res.data.access_token);
