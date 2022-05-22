@@ -23,7 +23,7 @@ export default function Player() {
   let [playerTrack, setPlayerTrack] = useState(false);
   let [playerShuffle, setPlayerShuffle] = useState(false);
   
-  //states and ref for bar progress
+  //states and ref for progress bar
   let [playerDuration, setPlayerDuration] = useState(0);
   let [playerPositionNumber, setPlayerPositionNumber] = useState(0);
   let [playerPositionPercentage, setPlayerPositionPercentage] = useState(0);
