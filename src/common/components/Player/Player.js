@@ -13,6 +13,7 @@ import { faRetweet } from '@fortawesome/free-solid-svg-icons';
 import { faVolumeDown } from '@fortawesome/free-solid-svg-icons';
 import './_player.scss';
 import { useAuthContext } from '../../../contexts/AuthContext';
+import { put } from '../../../adapters/xhr';
 
 export default function Player() {
   let authContext = useAuthContext();
@@ -20,6 +21,7 @@ export default function Player() {
   let [playerInstance, setPlayerInstance] = useState(undefined);
   let [playerPaused, setPlayerPaused] = useState(false);
   let [playerTrack, setPlayerTrack] = useState(false);
+  let [playerShuffle, setPlayerShuffle] = useState(false);
 
   useEffect(() => {
     if(authContext?.token){
@@ -79,6 +81,25 @@ export default function Player() {
     }
   }, [authContext]);
 
+  const playerShuffleAction = async () => {
+    if(authContext?.token){
+      await put({
+        url: `https://api.spotify.com/v1/me/player/shuffle?state=${!playerShuffle}`,
+        token: authContext?.token
+      }).then((res) => {
+        console.log(res);
+        setPlayerShuffle(!playerShuffle);
+      })
+      .catch(err => {
+          console.error(err);
+          if(err?.response?.status === 401){
+              sessionStorage.removeItem('spotify-oauth-token');
+              window.location.reload();
+          }
+      });
+    }
+  }
+
   if(playerLoaded) {
     return (
       <div className="player">
@@ -105,7 +126,7 @@ export default function Player() {
         <div className="player__actions">
           <FontAwesomeIcon icon={faEllipsisH} />
           <FontAwesomeIcon icon={faHeart} />
-          <FontAwesomeIcon icon={faRandom} />
+          <button onClick={() => playerShuffleAction()} className={playerShuffle ? 'active' : ''}><FontAwesomeIcon icon={faRandom} /></button>
           <FontAwesomeIcon icon={faRetweet} />
           <FontAwesomeIcon icon={faVolumeDown} />
         </div>

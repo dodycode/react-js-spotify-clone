@@ -132,6 +132,18 @@
   &__actions {
     color: $primary-grey;
 
+    > button {
+      margin: 0;
+      appearance: none;
+      border:none;
+      background: transparent;
+      color: $primary-grey;
+    }
+
+    > button.active{
+      color: $primary-blue;
+    }
+
     > .fa-ellipsis-h {
       display: none;
       margin-right: 0 !important;
