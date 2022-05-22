@@ -25,7 +25,6 @@ export default function Player() {
   
   //states and ref for bar progress
   let [playerDuration, setPlayerDuration] = useState(0);
-  let [playerUpdateTime, setPlayerUpdateTime] = useState(0);
   let [playerPositionNumber, setPlayerPositionNumber] = useState(0);
   let [playerPositionPercentage, setPlayerPositionPercentage] = useState(0);
   const playerPosition = useRef(null);
@@ -63,9 +62,8 @@ export default function Player() {
 
           setPlayerTrack(state.track_window.current_track);
           setPlayerPaused(state.paused);
-          setPlayerPositionNumber(state.position);
           setPlayerDuration(state.duration);
-          setPlayerUpdateTime(window.performance.now());
+          setPlayerPositionNumber(state.position);
 
           player?.getCurrentState().then(state => {
             !state ? setPlayerLoaded(false) : setPlayerLoaded(true);
@@ -94,9 +92,9 @@ export default function Player() {
   useEffect(() => {
     playerPosition.current = setInterval(() => {
       if(!playerPaused){
-        let currPosition = playerPositionNumber + (window.performance.now() - playerUpdateTime) / 1000;
-        setPlayerPositionNumber(currPosition > playerDuration ? playerDuration : currPosition);
-        
+        let currPosition = playerPositionNumber;
+        setPlayerPositionNumber(currPosition += 300);
+
         let currentPositionPercentage = playerPositionNumber ? (playerPositionNumber / playerDuration * 100) : 0;
         setPlayerPositionPercentage(currentPositionPercentage);
       }
@@ -106,7 +104,7 @@ export default function Player() {
     return () => {
       playerPosition.current && clearInterval(playerPosition.current);
     }
-  },[playerPosition, playerPaused, playerDuration, playerPositionNumber, playerPositionPercentage, playerUpdateTime]);
+  },[playerPosition, playerPaused, playerDuration, playerPositionNumber, playerPositionPercentage]);
 
   const playerShuffleAction = async () => {
     if(authContext?.token){
